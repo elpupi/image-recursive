@@ -4,6 +4,17 @@
 
 Défi de mon frère @milvi :+1: :sparkles: :camel: :tada: :rocket: :metal: :octocat:
 
+Pour lancer le programme sur Chrome:
+
+```bash
+npm run start:chrome
+```
+ou sur Firefox:
+
+```bash
+npm run start:firefox
+```
+
 ## Contexte
 
 Quand on partage son écran et qu'on regarde sa propre vidéo, on constate une récursivité infini tel qu'on le
