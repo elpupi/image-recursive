@@ -1,8 +1,8 @@
 dependencies:
   '@types/easeljs': 1.0.0
-  easeljs: 1.0.2
   local-web-server: 4.2.1
   long-stack-traces: 0.1.2
+  ws: 7.4.3
 devDependencies:
   '@types/resize-observer-browser': 0.1.5
   typescript: 4.1.5
@@ -304,10 +304,6 @@ packages:
     dev: false
     resolution:
       integrity: sha1-l4hXRCxEdJ5CBmE+N5RiBYJqvYA=
-  /easeljs/1.0.2:
-    dev: false
-    resolution:
-      integrity: sha512-PQTsiud32vrUIqZCbynjOJjCzoEp0xH+MRusRCdsZ1MzL4LCE2vp4Sa5cr6aShB3mK4vMZ8LFPnts4xuFhjEmg==
   /ee-first/1.1.1:
     dev: false
     resolution:
@@ -1199,6 +1195,20 @@ packages:
       node: '>=8.0.0'
     resolution:
       integrity: sha512-Svqw723a3R34KvsMgpjFBYCgNOSdcW3mQFK4wIfhGQhtaFVOJmdYoXgi63ne3dTlWgatVcUc7t4HtQ/+bUVIzQ==
+  /ws/7.4.3:
+    dev: false
+    engines:
+      node: '>=8.3.0'
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    resolution:
+      integrity: sha512-hr6vCR76GsossIRsr8OLR9acVVm1jyfEWvhbNjtgPOrfvAlKzvyeg/P6r8RuDjRyrcQoPQT7K0DGEPc7Ae6jzA==
   /ylru/1.2.1:
     dev: false
     engines:
@@ -1208,7 +1218,7 @@ packages:
 specifiers:
   '@types/easeljs': ^1.0.0
   '@types/resize-observer-browser': ^0.1.5
-  easeljs: ^1.0.2
   local-web-server: ^4.2.1
   long-stack-traces: ^0.1.2
   typescript: ^4.1.5
+  ws: ^7.4.3

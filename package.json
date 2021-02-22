@@ -13,12 +13,8 @@
     "dependencies": {
         "@types/easeljs": "^1.0.0",
         "local-web-server": "^4.2.1",
-        "long-stack-traces": "^0.1.2"
-    },
-    "local": {
-        "dependencies": {
-            "esm": "link:/home/milottit/GithubProjects/esm-fork-with-last-js@3.2.25"
-        }
+        "long-stack-traces": "^0.1.2",
+        "ws": "^7.4.3"
     },
     "devDependencies": {
         "@types/resize-observer-browser": "^0.1.5",
