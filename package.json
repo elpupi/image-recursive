@@ -1,0 +1,27 @@
+{
+	"name": "test",
+	"version": "0.0.1",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+        "postinstall": "cp "
+	},
+	"author": "Thomas Milotti <thomas.milotti@gmail.com> (https://github.com/milottit)",
+	"license": "MIT",
+	"dependencies": {
+		"@types/easeljs": "^1.0.0",
+		"easeljs": "^1.0.2",
+		"local-web-server": "^4.2.1",
+		"long-stack-traces": "^0.1.2"
+	},
+	"local": {
+		"dependencies": {
+			"esm": "link:/home/milottit/GithubProjects/esm-fork-with-last-js@3.2.25"
+		}
+	},
+	"devDependencies": {
+		"@types/resize-observer-browser": "^0.1.5",
+		"typescript": "^4.1.5"
+	}
+}

@@ -1,0 +1,39 @@
+{
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "allowJs": false,
+        "declaration": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "downlevelIteration": true,
+        "lib": [
+            "es2017",
+            "dom"
+        ],
+        "module": "ESNext",
+        "target": "ESNext",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "traceResolution": false,
+        "outDir": "app",
+        "baseUrl": ".",
+        "paths": {
+            "/app/*": [
+                "src/*"
+            ],
+            "/lib/*": [
+                "lib/*"
+            ],
+        },
+        "typeRoots": [
+            "node_modules/@types",
+            "@types"
+        ]
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
