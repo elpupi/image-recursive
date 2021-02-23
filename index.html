@@ -2,27 +2,32 @@
 <html>
 
 <head>
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/typo.css">
-  <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/typo.css">
+    <link rel="stylesheet" href="css/style.css">
 
-  <script type="module" src="app/index.js" defer></script>
+    <script type="module" src="app/index.js" defer></script>
 
 
 </head>
 
 <body class="full lateral-padding">
-  <h3 class="center full title">Milotti Challenge</h3>
+    <h3 class="center full title">Milotti Challenge</h3>
 
-  <section class="center full vertical margin-top">
+    <section class="center full vertical margin-top">
 
-    <div id="picker" class="center full">
-      <label for="image-picker">Choisis une image:</label>
-      <input type="file" id="image-picker" name="image-picker" accept="image/*">
-    </div>
+        <div id="picker" class="center full">
+            <label for="image-picker">Choisis une image:</label>
+            <input type="file" id="image-picker" name="image-picker" accept="image/*">
+        </div>
 
-    <canvas id="canvas" class="margin-top"></canvas>
-  </section>
+        <div class="row buttons">
+            <button class="clear" id="clear-all">Clear All</button>
+            <button class="clear" id="clear-selection">Clear Selection</button>
+        </div>
+
+        <canvas id="canvas" class="margin-top"></canvas>
+    </section>
 
 </body>
 

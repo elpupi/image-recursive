@@ -1,6 +1,6 @@
 // browser ES Module compels to have extension at the end (TS does not care if we add .js)
 // browser ES Module compels to have / or ./ at the beginning, so I added in tsconfig.json an alias /app => src/
-import { addSelection } from './select-area.js';
+import { createDragableSelection } from './select-area.js';
 import { ifChained } from '/app/util.js';
 
 const imagePicker = document.getElementById('image-picker') as HTMLInputElement;
@@ -75,7 +75,7 @@ const updateCanvas = () => {
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, width, height);
-        // addSelection(canvas);
+        // createDragableSelection(canvas);
     };
 
     if (!willUpdate && img.width && img.height) {

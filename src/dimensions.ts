@@ -1,4 +1,5 @@
 import { ifChained } from '/app/util.js';
+import type { WidthHeight } from './types';
 
 
 const htmlDimensions = (el: HTMLElement) => {
@@ -10,10 +11,10 @@ const htmlDimensions = (el: HTMLElement) => {
     return { width: el.clientWidth, height: el.clientHeight };
 };
 
-const imageDimensions = (img: HTMLImageElement) => ({ width: img.naturalWidth, height: img.naturalHeight });
+const imageDimensions = (img: HTMLImageElement): WidthHeight => ({ width: img.naturalWidth, height: img.naturalHeight });
 
 
-export const sceneDim = (img: HTMLImageElement): { width: number; height: number; } => {
+export const sceneDim = (img: HTMLImageElement): WidthHeight => {
     const bodyDim = htmlDimensions(document.body);
     const imgDim = imageDimensions(img);
 
