@@ -110,3 +110,11 @@ export const removableEventListeners = (debug: boolean = false) => {
 
     return { removeAllListeners, removeListenerById, on };
 };
+
+
+
+
+export const zoomFromMouseWheel = (event: WheelEvent) => {
+    event.preventDefault();
+    return event.deltaY > 0 ? 1 / 1.1 : 1.1;
+};

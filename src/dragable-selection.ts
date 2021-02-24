@@ -1,6 +1,6 @@
 import type { Area } from './types';
 import easelJS from '/app/easeljs.js';
-import { removableEventListeners } from '/app/util.js';
+import { removableEventListeners, zoomFromMouseWheel } from '/app/util.js';
 
 
 const { on, removeAllListeners, removeListenerById } = removableEventListeners();
@@ -56,7 +56,10 @@ export class DragableSelection {
             if (!this.selection.cursor?.startsWith('grab'))
                 this.selection.cursor = 'grab';
         });
+
         on(this.selection, 'mouseout', (event: createjs.MouseEvent) => this.selection.cursor = 'default');
+
+        on(this.stage.canvas as HTMLCanvasElement, 'wheel', (event: WheelEvent) => this.onZoom(event));
     }
 
     private initRect() {
@@ -168,7 +171,7 @@ export class DragableSelection {
         this.lastMousePosition = { x: event.stageX, y: event.stageY };
 
         on(this.selection, 'pressup', (event: createjs.MouseEvent) => this.onSelectionEnd(event), { id: 'selection-mouse' });
-        on(this.selection, 'pressmove', (event: createjs.MouseEvent) => this.selectionDrag(event), { id: 'selection-press-move' });
+        on(this.selection, 'pressmove', (event: createjs.MouseEvent) => this.onSelectionDrag(event), { id: 'selection-press-move' });
     }
 
     private onSelectionEnd(event: createjs.MouseEvent) {
@@ -181,7 +184,7 @@ export class DragableSelection {
         this.listenStage();
     }
 
-    private selectionDrag(event: createjs.MouseEvent) {
+    private onSelectionDrag(event: createjs.MouseEvent) {
         if (!this.isVisible)
             return;
 
@@ -202,6 +205,25 @@ export class DragableSelection {
         this.change();
     }
 
+    private onZoom(event: WheelEvent) {
+        const zoom = zoomFromMouseWheel(event);
+
+        const r = this.rect;
+        const { w, h } = r;
+
+        r.w *= zoom;
+        r.h *= zoom;
+
+        const dw = r.w - w;
+        const dh = r.h - h;
+
+        const o = this.selection;
+
+        o.x -= dw / 2;
+        o.y -= dh / 2;
+
+        this.change();
+    }
 
     clear() {
         this.init();
