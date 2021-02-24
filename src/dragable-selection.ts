@@ -32,17 +32,15 @@ export class DragableSelection {
     constructor(public stage: createjs.Stage, options: DragableSelectionOptions = {}) {
         this.constraints = Object.assign({ ratioWtoH: undefined }, options.constraints);
         this.init();
+        // Enables or disables (by passing a frequency of 20ms) mouse over (mouseover and mouseout)
+        // and roll over events (rollover and rollout) for this stage's display list.
+        this.stage.enableMouseOver(20);
         // this.stage.cursor = 'crosshair';
     }
 
     private init() {
         removeAllListeners();
         this.listenStage();
-
-
-        /*  on(this.selection, 'mouseover', (event: createjs.MouseEvent) => this.selection.cursor = 'pointer');
-         on(this.selection, 'mouseout', (event: createjs.MouseEvent) => this.selection.cursor = 'crosshair'); */
-
 
         this.isVisible = false;
     }
@@ -53,6 +51,12 @@ export class DragableSelection {
 
         this.selection = new easelJS.Shape();
         this.stage.addChild(this.selection);
+
+        on(this.selection, 'mouseover', (event: createjs.MouseEvent) => {
+            if (!this.selection.cursor?.startsWith('grab'))
+                this.selection.cursor = 'grab';
+        });
+        on(this.selection, 'mouseout', (event: createjs.MouseEvent) => this.selection.cursor = 'default');
     }
 
     private initRect() {
@@ -170,6 +174,8 @@ export class DragableSelection {
     private onSelectionEnd(event: createjs.MouseEvent) {
         event.stopPropagation();
 
+        this.selection.cursor = 'grab';
+
         this.lastMousePosition = undefined;
         removeListenerById('selection-press-move');
         this.listenStage();
@@ -178,6 +184,8 @@ export class DragableSelection {
     private selectionDrag(event: createjs.MouseEvent) {
         if (!this.isVisible)
             return;
+
+        this.selection.cursor = 'grabbing';
 
         const last = this.lastMousePosition;
         const mouse = { x: event.stageX, y: event.stageY };
