@@ -232,6 +232,9 @@ export class DragableSelection {
     }
 
     private change() {
+        if (!this.rect)
+            return;
+
         const area = this.area();
 
         if (area.width === 0 && area.height === 0)

@@ -1,0 +1,35 @@
+button,
+.button {
+    padding: 7px 20px;
+    font-size: 15px;
+    font-weight: 900;
+    color: #fff;
+    cursor: pointer;
+    width: max-content;
+    transition: 0.25s ease;
+}
+
+button.negative,
+.button.negative {
+    background-color: #f50057;
+    border: 2px solid #f50057;
+}
+
+button.negative:hover,
+.button.negative:hover {
+    color: #f50057;
+    background-color: transparent;
+}
+
+
+button.positive,
+.button.positive {
+    background-color: #29a2aa;
+    border: 2px solid #29a2aa;
+}
+
+button.positive:hover,
+.button.positive:hover {
+    color: #29a2aa;
+    background-color: transparent;
+}
