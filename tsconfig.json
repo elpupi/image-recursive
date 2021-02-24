@@ -7,8 +7,8 @@
         "experimentalDecorators": true,
         "downlevelIteration": true,
         "lib": [
-            "es2017",
-            "dom"
+            "ESNext",
+            "DOM"
         ],
         "module": "ESNext",
         "target": "ESNext",

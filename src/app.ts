@@ -1,8 +1,9 @@
 import type { WidthHeight } from './types';
 import easelJS from '/app/easeljs.js';
+import { removableEventListeners } from '/app/util.js';
 import { waitForImageFile } from '/app/image-picker.js';
 import { EaselBitmap } from '/app/image-bitmap.js';
-import { createDragableSelection, DragableSelection } from '/app/select-area.js';
+import { DragableSelection } from '/app/dragable-selection.js';
 import { sceneDim } from '/app/dimensions.js';
 import { imageRecursion } from '/app/recursive-image.js';
 
@@ -21,16 +22,8 @@ const buttons = {
     clearSelection: document.getElementById('clear-selection') as HTMLButtonElement,
 };
 
-const removeListeners: Array<Function> = [];
 
-const on = <K extends keyof HTMLElementEventMap>(el: HTMLElement, type: K, listener: (this: HTMLButtonElement, ev: HTMLElementEventMap[ K ]) => any, options?: boolean | AddEventListenerOptions) => {
-    el.addEventListener(type, listener, options);
-    const removeListener = () => el.removeEventListener(type, listener, options);
-
-    removeListeners.push(removeListener);
-    return removeListener;
-};
-
+const { on, removeAllListeners } = removableEventListeners();
 
 
 /*********************************
@@ -70,6 +63,8 @@ export class App {
 
             // loop
             const nextImage = await waitForImageFile();
+            this.clear();
+
             return runLogic(nextImage);
         };
 
@@ -88,18 +83,20 @@ export class App {
     }
 
     private addEvents() {
-        on(buttons.clearAll, 'click', () => this.clear(), { passive: true });
+        on(buttons.clearAll, 'click', () => this.clear(), { event: { passive: true } });
         on(buttons.clearSelection, 'click', () => {
             this.state.selection.clear();
             this.removeImageRecursive();
-        }, { passive: true });
+        }, { event: { passive: true } });
     }
 
     private removeImageRecursive() {
         const { state } = this;
 
-        if (state.imageRecursive)
+        if (state.imageRecursive) {
             state.stage.removeChild(state.imageRecursive);
+            state.imageRecursive = undefined;
+        }
     }
 
     private createImage(): EaselBitmap {
@@ -122,9 +119,11 @@ export class App {
 
         const { width, height } = state.sceneDimension;
 
-        state.selection = createDragableSelection({ stage: state.stage, constraints: { ratioWtoH: height / width } }, area => {
-            state.imageRecursive = imageRecursion({ width, height }, area, state.imageEl);
+        state.selection = new DragableSelection(state.stage, { constraints: { ratioWtoH: height / width } });
+
+        state.selection.onChange(area => {
             this.removeImageRecursive();
+            state.imageRecursive = imageRecursion({ width, height }, area, state.imageEl);
             state.stage.addChild(state.imageRecursive);
         });
     }
@@ -132,9 +131,9 @@ export class App {
     private clear() {
         // kill stuff
         easelJS.Ticker.removeAllEventListeners();
-        removeListeners.forEach(remove => remove());
-        this.state.stage.enableDOMEvents(false);
-        this.state.stage.clear();
+        removeAllListeners();
+        this.state?.stage.enableDOMEvents(false);
+        this.state?.stage.clear();
         resetCanvasSize();
         this.state = undefined;
     }
