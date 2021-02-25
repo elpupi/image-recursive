@@ -22,7 +22,7 @@ export interface DragableSelectionOptions {
 
 export class DragableSelection {
     public constraints: Constraints;
-    private selection: createjs.Shape;
+    private selection: createjs.Shape & { zIndex: number; };
     private lastMousePosition: Point;
     private rect: createjs.Graphics.Rect;
     private listeners: OnSelection[] = [];
@@ -34,7 +34,7 @@ export class DragableSelection {
         this.init();
         // Enables or disables (by passing a frequency of 20ms) mouse over (mouseover and mouseout)
         // and roll over events (rollover and rollout) for this stage's display list.
-        this.stage.enableMouseOver(20);
+        this.stage.enableMouseOver(100);
         // this.stage.cursor = 'crosshair';
     }
 
@@ -49,7 +49,8 @@ export class DragableSelection {
         if (this.selection)
             this.stage.removeChild(this.selection);
 
-        this.selection = new easelJS.Shape();
+        this.selection = new easelJS.Shape() as createjs.Shape & { zIndex: number; };
+        this.selection.zIndex = Infinity;
         this.stage.addChild(this.selection);
 
         on(this.selection, 'mouseover', (event: createjs.MouseEvent) => {
@@ -65,6 +66,28 @@ export class DragableSelection {
     private initRect() {
         const g = this.selection.graphics.setStrokeStyle(1).beginStroke('#000').beginFill('rgba(0,0,0,0.05)');
         this.rect = g.drawRect(0, 0, 0, 0).command as createjs.Graphics.Rect;
+    }
+
+    public copyFromSelection(dragableSelection: DragableSelection, zoom = 1) {
+        const from = dragableSelection;
+
+        this.initSelection();
+        this.initRect();
+
+        this.selection.cursor = from.selection.cursor;
+
+        const r = this.rect;
+
+        r.w = from.rect.w;
+        r.h = from.rect.h;
+
+        const o = this.selection;
+
+        o.x = from.selection.x;
+        o.y = from.selection.y;
+
+        this.scale(zoom, (x, dx) => x * zoom);
+        this.onStageEnd();
     }
 
     private listenSelection() {
@@ -94,7 +117,7 @@ export class DragableSelection {
         return mouse.x > x && mouse.x < x + width && mouse.y > y && mouse.y < y + height;
     }
 
-    private area() {
+    public area() {
         const r = this.rect;
         // corner up left
         const o = this.selection;
@@ -152,7 +175,7 @@ export class DragableSelection {
             r.h = h;
     }
 
-    private onStageEnd(event: createjs.MouseEvent) {
+    private onStageEnd(event?: createjs.MouseEvent) {
         removeListenerById('stage-mouse-up');
         removeListenerById('stage-mouse-move');
         this.change();
@@ -206,21 +229,26 @@ export class DragableSelection {
     }
 
     private onZoom(event: WheelEvent) {
-        const zoom = zoomFromMouseWheel(event);
+        event.preventDefault();
 
+        const zoom = zoomFromMouseWheel(event);
+        this.scale(zoom, (x, dx) => x - dx / 2);
+    }
+
+    private scale(zoom: number, shift: (x: number, dx: number) => number) {
         const r = this.rect;
         const { w, h } = r;
 
         r.w *= zoom;
         r.h *= zoom;
 
-        const dw = r.w - w;
+        const dw = r.w - w; // or (zoom -1) * w
         const dh = r.h - h;
 
         const o = this.selection;
 
-        o.x -= dw / 2;
-        o.y -= dh / 2;
+        o.x = shift(o.x, dw);
+        o.y = shift(o.y, dh);
 
         this.change();
     }
