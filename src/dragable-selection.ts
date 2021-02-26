@@ -34,6 +34,7 @@ export class DragableSelection {
         this.init();
         // Enables or disables (by passing a frequency of 20ms) mouse over (mouseover and mouseout)
         // and roll over events (rollover and rollout) for this stage's display list.
+        // Implementation is really bad and no matter what is the setting, there is a jumping cursor
         this.stage.enableMouseOver(100);
         // this.stage.cursor = 'crosshair';
     }
@@ -71,10 +72,11 @@ export class DragableSelection {
     public copyFromSelection(dragableSelection: DragableSelection, zoom = 1) {
         const from = dragableSelection;
 
+        if (!from.selection)
+            return;
+
         this.initSelection();
         this.initRect();
-
-        this.selection.cursor = from.selection.cursor;
 
         const r = this.rect;
 
@@ -85,6 +87,8 @@ export class DragableSelection {
 
         o.x = from.selection.x;
         o.y = from.selection.y;
+
+        this.selection.cursor = from.selection.cursor;
 
         this.scale(zoom, (x, dx) => x * zoom);
         this.onStageEnd();
@@ -255,8 +259,8 @@ export class DragableSelection {
 
     clear() {
         this.init();
-        this.initRect();
         this.initSelection();
+        this.initRect();
     }
 
     private change() {

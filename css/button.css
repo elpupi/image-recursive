@@ -11,25 +11,25 @@ button,
 
 button.negative,
 .button.negative {
-    background-color: #f50057;
-    border: 2px solid #f50057;
+    background-color: var(--secondary);
+    border: 2px solid var(--secondary);
 }
 
 button.negative:hover,
 .button.negative:hover {
-    color: #f50057;
+    color: var(--secondary);
     background-color: transparent;
 }
 
 
 button.positive,
 .button.positive {
-    background-color: #29a2aa;
-    border: 2px solid #29a2aa;
+    background-color: var(--primary);
+    border: 2px solid var(--primary);
 }
 
 button.positive:hover,
 .button.positive:hover {
-    color: #29a2aa;
+    color: var(--primary);
     background-color: transparent;
 }

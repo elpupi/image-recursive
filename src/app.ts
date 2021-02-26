@@ -1,7 +1,7 @@
 import type { Area, WidthHeight } from './types';
 import easelJS from '/app/easeljs.js';
-import { removableEventListeners } from '/app/util.js';
-import { waitForImageFile } from '/app/image-picker.js';
+import { removableEventListeners, elementVisibility } from '/app/util.js';
+import { dropZone, onNewImage, resetImagePicker } from '/app/image-picker.js';
 import { EaselBitmap } from '/app/image-bitmap.js';
 import { DragableSelection } from '/app/dragable-selection.js';
 import { imageDimensions } from '/app/dimensions.js';
@@ -17,8 +17,8 @@ const { on, removeAllListeners } = removableEventListeners();
 
 
 const defaultCanvasSize = {
-    width: canvas.width || 100,
-    height: canvas.height || 100
+    width: canvas.width ?? 100,
+    height: canvas.height ?? 100
 };
 
 const setCanvasDimensions = (dim: WidthHeight) => {
@@ -27,8 +27,7 @@ const setCanvasDimensions = (dim: WidthHeight) => {
 };
 
 const resetCanvasSize = () => {
-    if (!inputSettings.canvasWidth.enabled())
-        Object.assign(canvas, defaultCanvasSize);
+    Object.assign(canvas, defaultCanvasSize);
 };
 
 resetCanvasSize();
@@ -57,14 +56,21 @@ export class App {
 
     constructor() { }
 
-    public async run() {
+    public run() {
         this.initSettings();
-        const imageEl = await waitForImageFile();
-        await this.runLogic(imageEl);
+        onNewImage(imageEl => {
+            this.canvasVisibility(true);
+            this.clear();
+            this.runLogic(imageEl);
+        });
+    }
+
+    private canvasVisibility(visible: boolean) {
+        elementVisibility(canvas, visible);
+        elementVisibility(dropZone, !visible);
     }
 
     private init() {
-        this.addEvents();
 
         this.state = {} as any;
 
@@ -89,15 +95,19 @@ export class App {
         stage.autoClear = false;
     }
 
-    private addEvents() {
-        on(buttons.clearAll, 'click', () => this.clear(), { event: { passive: true } });
+    private initButtons() {
+        on(buttons.clearAll, 'click', () => {
+            this.canvasVisibility(false);
+            this.clear();
+        }, { passive: true });
+
         on(buttons.clearSelection, 'click', () => {
-            this.state.selection.clear();
+            this.state?.selection.clear();
             this.removeImageRecursive();
-        }, { event: { passive: true } });
+        }, { passive: true });
     }
 
-    private initSettings() {
+    private initInputSettings() {
         inputSettings.canvasWidth.onChange(width => {
             const selection = this.state.selection;
             const oldWith = canvas.width;
@@ -106,7 +116,12 @@ export class App {
             this.state.selection.copyFromSelection(selection, width / oldWith);
         });
 
-        inputSettings.nbRecursion.onChange(nbRecursion => this.createImageRecursive());
+        inputSettings.nbRecursion.onChange(() => this.createImageRecursive());
+    }
+
+    private initSettings() {
+        this.initButtons();
+        this.initInputSettings();
     }
 
     private async runLogic(imageEl: HTMLImageElement) {
@@ -123,19 +138,15 @@ export class App {
 
         // run tick (rAF in the background calling every time stage.update => calling .draw
         easelJS.Ticker.on('tick', (event: createjs.Event) => stage.update(event));
-
-        // loop
-        const nextImage = await waitForImageFile();
-        this.clear();
-
-        return this.runLogic(nextImage);
     }
 
 
     private createImage(): EaselBitmap {
         const { state } = this;
 
-        state.sceneDimension = imageDimensions(state.imageEl, inputSettings.canvasWidth.getValue());
+        const inputWidth = inputSettings.canvasWidth;
+
+        state.sceneDimension = imageDimensions(state.imageEl, { width: inputWidth.enabled() && inputWidth.getValue() });
         const { width, height } = state.sceneDimension;
 
         setCanvasDimensions({ width, height });
@@ -177,7 +188,7 @@ export class App {
     private removeImageRecursive() {
         const { state } = this;
 
-        if (state.imageRecursive) {
+        if (state?.imageRecursive) {
             state.stage.removeChild(state.imageRecursive.image);
             state.imageRecursive = undefined;
         }
@@ -187,10 +198,15 @@ export class App {
     private clear() {
         // kill stuff
         easelJS.Ticker.removeAllEventListeners();
-        removeAllListeners();
-        this.state?.stage.enableDOMEvents(false);
-        this.state?.stage.clear();
+
+        const { state } = this;
+
+        state?.stage.enableDOMEvents(false);
+        state?.stage.clear();
+
         resetCanvasSize();
         this.state = undefined;
+
+        resetImagePicker();
     }
 }

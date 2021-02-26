@@ -14,7 +14,7 @@ const htmlElementSize = (el: HTMLElement): WidthHeight => {
 const imageSize = (img: HTMLImageElement): WidthHeight => ({ width: img.naturalWidth, height: img.naturalHeight });
 
 
-export const imageDimensions = (img: HTMLImageElement, requiredWidth?: number): WidthHeight => {
+export const imageDimensions = (img: HTMLImageElement, requiredDim: { width?: number, height?: number; } = {}): WidthHeight => {
     const bodyDim = htmlElementSize(document.body);
     const imgDim = imageSize(img);
 
@@ -22,6 +22,7 @@ export const imageDimensions = (img: HTMLImageElement, requiredWidth?: number): 
         wh: imgDim.height / imgDim.width,
         hw: imgDim.width / imgDim.height
     };
+
 
     const max = {
         h: { width: bodyDim.width, height: 600 }, // horizontal
@@ -31,7 +32,8 @@ export const imageDimensions = (img: HTMLImageElement, requiredWidth?: number): 
     const isVertical = r.wh > 1;
 
     const canvasDim = ifChained()
-        .next({ if: requiredWidth > 0, then: { width: requiredWidth, height: requiredWidth * r.wh } })
+        .next({ if: requiredDim?.width > 0, then: { width: requiredDim.width, height: requiredDim.width * r.wh } })
+        .next({ if: requiredDim?.height > 0, then: { width: requiredDim.height * r.hw, height: requiredDim.height } })
         .next({ if: isVertical && imgDim.width > max.v.width, then: { width: max.v.width, height: max.v.width * r.wh } })
         .next({ if: !isVertical && imgDim.height > max.h.height, then: { width: max.h.height * r.hw, height: max.h.height } })
         .next({ then: { width: imgDim.width, height: imgDim.width * r.wh } })

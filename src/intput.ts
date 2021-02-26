@@ -3,16 +3,28 @@ import { removableEventListeners } from '/app/util.js';
 const { on, removeAllListeners, removeListenerById } = removableEventListeners();
 
 
-const input = {
-    canvasWidth: document.getElementById('canvas-width') as HTMLElement,
-    nbRecursion: document.getElementById('nb-recursion') as HTMLElement
-};
+const inputs = [
+    {
+        name: 'canvasWidth',
+        el: document.getElementById('canvas-width') as HTMLElement,
+        default: 'auto'
+    },
+    {
+        name: 'nbRecursion',
+        el: document.getElementById('nb-recursion') as HTMLElement,
+        default: 5
+    }
+] as const;
 
-const passiveEventOptions = { event: { passive: true } };
+type InputType = typeof inputs extends (infer U)[] | readonly (infer U)[] ? U : never;
+type InputNames = {
+    [ K in keyof InputType ]: InputType[ 'name' ]
+}[ keyof InputType ];
+
 
 export type OnRangeChange = (value: number) => void;
 
-const addListenerToRange = (el: HTMLElement, onChange: OnRangeChange, id: string | symbol) => {
+const addListenerToRange = (el: HTMLElement, onChange: OnRangeChange, defaultValue: string | number, id: string | symbol) => {
     const output = el.querySelector('.range__output') as HTMLElement;
     const input = el.querySelector('input[type="range"]') as HTMLInputElement;
     const disable = el.querySelector('input[type="checkbox"]') as HTMLInputElement;
@@ -27,8 +39,8 @@ const addListenerToRange = (el: HTMLElement, onChange: OnRangeChange, id: string
         return isNaN(value) ? undefined : value;
     };
 
-    const getValue = (force: boolean = false) => !disable.checked || force ? value() : defaultValue;
-    const defaultValue = value();
+    const getValue = (force: boolean = false) => !disable.checked || force ? value() : typeof defaultValue === 'number' ? defaultValue : undefined;
+    //  const defaultValue = value();
 
 
     const onCheck = () => {
@@ -45,17 +57,18 @@ const addListenerToRange = (el: HTMLElement, onChange: OnRangeChange, id: string
     on(input, 'input', (e: InputEvent) => {
         output.textContent = input.value;
         onChange(getValue());
-    }, { ...passiveEventOptions, id });
+    }, { passive: true, id });
 
 
     if (disable) {
-        on(disable, 'input', (e: InputEvent) => onCheck(), { ...passiveEventOptions, id });
+        on(disable, 'input', (e: InputEvent) => onCheck(), { passive: true, id });
         onCheck();
         onChange(getValue());
     }
 
     const setValue = (v: number | string) => {
         output.textContent = `${v}`;
+        input.value = `${v}`;
     };
 
     const enabled = () => !disable.checked;
@@ -64,8 +77,8 @@ const addListenerToRange = (el: HTMLElement, onChange: OnRangeChange, id: string
 };
 
 
-export type OnChangeListeners<T> = {
-    [ K in keyof T ]: {
+export type OnChangeListeners = {
+    [ K in InputNames ]: {
         onChange: (onChangeListener: OnRangeChange) => void;
         removeAllListeners: () => void;
         setValue: (v: number | string) => void;
@@ -75,12 +88,12 @@ export type OnChangeListeners<T> = {
 };
 
 export const listenToInputSettings = () => {
-    const onChangeListeners = Object.entries(input).reduce((o, [ name, el ]) => {
+    const onChangeListeners = inputs.reduce((o, { name, el, default: defaultV }) => {
         let listeners: OnRangeChange[] = [];
         const listener = (value: number) => { listeners.forEach(onChange => onChange(value)); };
 
         const id = Symbol();
-        const elements = addListenerToRange(el, listener, id);
+        const elements = addListenerToRange(el, listener, defaultV, id);
 
         o[ name ] = {
             onChange: (onChangeListener: OnRangeChange) => listeners.push(onChangeListener),
@@ -92,7 +105,7 @@ export const listenToInputSettings = () => {
         };
 
         return o;
-    }, {}) as OnChangeListeners<typeof input>;
+    }, {}) as OnChangeListeners;
 
 
     return { removeAllListeners, ...onChangeListeners };

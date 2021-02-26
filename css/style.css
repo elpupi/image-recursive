@@ -9,7 +9,7 @@ body {
 .title {
     font-weight: 700;
     text-transform: uppercase;
-    color: cadetblue;
+    color: var(--primary);
 }
 
 .full {
@@ -27,7 +27,7 @@ body {
     align-items: center;
 }
 
-.vertical {
+.column {
     display: flex;
     flex-direction: column;
 }
@@ -50,18 +50,61 @@ body {
     margin-top: 25px;
 }
 
-/* label+input {
-    margin-left: 15px;
-} */
-#picker input {
+.space-between {
+    justify-content: space-between;
+}
+
+
+input[type="file"] {
     display: none;
 }
 
-#picker label {
-    border: 1px solid #ccc;
-    display: inline-block;
-    padding: 6px 12px;
-    cursor: pointer;
+input[type="range"] {
+    flex-grow: 2;
+}
+
+.range label {
+    font-size: 1.4rem;
+}
+
+.range {
+    max-width: 500px;
+}
+
+.range__label label+span {
+    margin-left: 5px;
+}
+
+.range__label span {
+    font-weight: 500;
+}
+
+[draggable] * {
+    /* no events for children inside a droppable zone */
+    /* if not, dragenter/leave events get mixed up */
+    pointer-events: none;
+}
+
+[draggable].dragging {
+    transform: scale(1.01);
+    opacity: 0.8;
+}
+
+.drop-zone {
+    border: 2px dashed var(--primary);
+    padding: 50px 20px;
+    color: var(--primary-dark);
+    max-width: 1000px;
+
+}
+
+.drop-zone.dragging {
+    border-style: solid;
+    opacity: 1;
+}
+
+.invisible {
+    display: none;
 }
 
 /* ------------------------------------- */

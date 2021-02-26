@@ -2,6 +2,9 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="css/variable.css">
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/typo.css">
     <link rel="stylesheet" href="css/style.css">
@@ -15,11 +18,11 @@
 <body class="full lateral-padding">
     <h3 class="center full title">Milotti Challenge</h3>
 
-    <section class="center full vertical margin-top">
+    <section class="center full column margin-top">
 
-        <div id="picker" class="center full">
-            <label class="button positive" for="image-picker">Choisis une image</label>
-            <input type="file" id="image-picker" name="image-picker" accept="image/*">
+        <div id="image-picker" class="center full droppable" draggable>
+            <label class="button positive" for="picker">Choose or Drag an image</label>
+            <input type="file" id="picker" name="picker" accept="image/*">
         </div>
 
         <div class="row buttons margin-top-2">
@@ -27,7 +30,45 @@
             <button class="negative" id="clear-selection">Clear Selection</button>
         </div>
 
-        <canvas id="canvas" class="margin-top"></canvas>
+        <div class="column full center margin-top">
+            <div id="canvas-width" class="column full range">
+
+                <div class="row space-between">
+                    <div class="range__label">
+                        <label for="canvas-width">Canvas Width:</label>
+                        <span class="range__output">auto</span>
+                    </div>
+
+                    <div class="range__enable">
+                        <label for="canvas-width">Default</label>
+                        <input type="checkbox" checked>
+                    </div>
+                </div>
+
+                <input type="range" name="canvas-width" step="1" min="200" max="2000" disabled>
+            </div>
+
+            <div id="nb-recursion" class="column full range margin-top-2">
+
+                <div class="row space-between">
+                    <div class="range__label">
+                        <label for="nb-recursion">Number Recursion:</label>
+                        <span class="range__output">5</span>
+                    </div>
+
+                    <div class="range__enable">
+                        <label for="canvas-width">Default</label>
+                        <input type="checkbox" checked>
+                    </div>
+                </div>
+
+                <input type="range" name="nb-recursion" step="1" min="1" max="30" value="5">
+            </div>
+        </div>
+
+        <div id="drop-zone" class="margin-top full center drop-zone" draggable><span>You can drop an image or video here also 📷</span>
+        </div>
+        <canvas id="canvas" class="margin-top invisible" width="100%" height="100"></canvas>
     </section>
 
 </body>
