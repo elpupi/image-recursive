@@ -79,7 +79,7 @@ input[type="range"] {
     font-weight: 500;
 }
 
-[draggable] * {
+[draggable].drop-zone * {
     /* no events for children inside a droppable zone */
     /* if not, dragenter/leave events get mixed up */
     pointer-events: none;

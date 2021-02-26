@@ -10,3 +10,6 @@ export interface Area {
     width: number;
     height: number;
 }
+
+
+export type HTMLMediaElement = HTMLImageElement | HTMLVideoElement;

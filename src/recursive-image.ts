@@ -1,4 +1,4 @@
-import type { Area, WidthHeight } from './types';
+import type { Area, HTMLMediaElement, WidthHeight } from './types';
 import { EaselBitmap } from '/app/image-bitmap.js';
 import easelJS from '/app/easeljs.js';
 
@@ -8,7 +8,7 @@ interface Factor { x: number; y: number; }
 export class ImageRecursive {
     public image: createjs.Container;
 
-    constructor(private canvasDim: WidthHeight, public initArea: Area, private img: HTMLImageElement, public maxRecursion = 5) {
+    constructor(private canvasDim: WidthHeight, public initArea: Area, private media: HTMLMediaElement, public maxRecursion = 5) {
     }
 
     create(): createjs.Container {
@@ -26,7 +26,7 @@ export class ImageRecursive {
             if (step === 0)
                 return container;
 
-            const image = new EaselBitmap(this.img);
+            const image = new EaselBitmap(this.media);
             image.destRect = scene;
 
             container.addChild(image);

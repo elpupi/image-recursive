@@ -1,4 +1,4 @@
-import type { Area, WidthHeight } from './types';
+import type { Area, WidthHeight, HTMLMediaElement } from './types';
 import easelJS from '/app/easeljs.js';
 import { removableEventListeners, elementVisibility } from '/app/util.js';
 import { dropZone, onNewImage, resetImagePicker } from '/app/image-picker.js';
@@ -49,7 +49,7 @@ export class App {
     state: {
         stage: createjs.Stage;
         sceneDimension: WidthHeight;
-        imageEl: HTMLImageElement;
+        mediaEl: HTMLMediaElement;
         selection: DragableSelection;
         imageRecursive: ImageRecursive;
     };
@@ -112,7 +112,7 @@ export class App {
             const selection = this.state.selection;
             const oldWith = canvas.width;
 
-            this.runLogic(this.state.imageEl);
+            this.runLogic(this.state.mediaEl);
             this.state.selection.copyFromSelection(selection, width / oldWith);
         });
 
@@ -124,10 +124,10 @@ export class App {
         this.initInputSettings();
     }
 
-    private async runLogic(imageEl: HTMLImageElement) {
+    private async runLogic(mediaEl: HTMLMediaElement) {
 
         this.init();
-        this.state.imageEl = imageEl;
+        this.state.mediaEl = mediaEl;
 
         const { stage } = this.state;
 
@@ -146,12 +146,12 @@ export class App {
 
         const inputWidth = inputSettings.canvasWidth;
 
-        state.sceneDimension = imageDimensions(state.imageEl, { width: inputWidth.enabled() && inputWidth.getValue() });
+        state.sceneDimension = imageDimensions(state.mediaEl, { width: inputWidth.enabled() && inputWidth.getValue() });
         const { width, height } = state.sceneDimension;
 
         setCanvasDimensions({ width, height });
 
-        const imageEasel = new EaselBitmap(state.imageEl);
+        const imageEasel = new EaselBitmap(state.mediaEl);
         imageEasel.destRect = new easelJS.Rectangle(0, 0, width, height);
 
         return imageEasel;
@@ -178,7 +178,7 @@ export class App {
 
         this.removeImageRecursive();
 
-        state.imageRecursive = new ImageRecursive({ width, height }, areaToDraw, state.imageEl, inputSettings.nbRecursion.getValue(true) || 5);
+        state.imageRecursive = new ImageRecursive({ width, height }, areaToDraw, state.mediaEl, inputSettings.nbRecursion.getValue(true) || 5);
         const imageRecursiveObj = state.imageRecursive.create();
 
         state.stage.addChild(imageRecursiveObj);

@@ -1,5 +1,5 @@
 import { ifChained } from '/app/util.js';
-import type { WidthHeight } from './types';
+import type { HTMLMediaElement, WidthHeight } from './types';
 
 
 const htmlElementSize = (el: HTMLElement): WidthHeight => {
@@ -11,12 +11,17 @@ const htmlElementSize = (el: HTMLElement): WidthHeight => {
     return { width: el.clientWidth, height: el.clientHeight };
 };
 
-const imageSize = (img: HTMLImageElement): WidthHeight => ({ width: img.naturalWidth, height: img.naturalHeight });
+const mediaSize = (media: HTMLMediaElement): WidthHeight => {
+    if (media instanceof HTMLImageElement)
+        return { width: media.naturalWidth, height: media.naturalHeight };
+
+    return { width: media.videoWidth, height: media.videoHeight };
+};
 
 
-export const imageDimensions = (img: HTMLImageElement, requiredDim: { width?: number, height?: number; } = {}): WidthHeight => {
+export const imageDimensions = (img: HTMLMediaElement, requiredDim: { width?: number, height?: number; } = {}): WidthHeight => {
     const bodyDim = htmlElementSize(document.body);
-    const imgDim = imageSize(img);
+    const imgDim = mediaSize(img);
 
     const r = {
         wh: imgDim.height / imgDim.width,
